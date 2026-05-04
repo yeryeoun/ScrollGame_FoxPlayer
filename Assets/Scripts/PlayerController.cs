@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-
     [Header("Jump Settings")]
     public float jumpHeight = 2f;
     public float jumpDuration = 0.5f;
@@ -12,7 +9,6 @@ public class PlayerController : MonoBehaviour
     [Header("Animation Controller")]
     public RuntimeAnimatorController idleController;
     public RuntimeAnimatorController jumpController;
-    public RuntimeAnimatorController runController;
 
     private SpriteRenderer spriteRenderer;
     private Animator animator;
@@ -20,7 +16,6 @@ public class PlayerController : MonoBehaviour
     private bool isJumping = false;
     private float jumpTimer = 0f;
     private Vector3 startPosition;
-    private bool isMovingRight = false;
 
     void Start()
     {
@@ -37,39 +32,17 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // 1. 이동 로직
-        Vector2 moveDirection = Vector2.zero;
-
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            moveDirection.x -= 1f;
-            spriteRenderer.flipX = true; // 왼쪽을 볼 때 이미지 반전 (필요 시)
-        }
-        
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            moveDirection.x += 1f;
-            isMovingRight = true;
-            spriteRenderer.flipX = false; // 오른쪽을 볼 때 정방향
-        }
-
-        moveDirection = moveDirection.normalized;
-        transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
-
-        // 2. 점프 입력 확인
+        // 1. 점프 입력 확인 (스페이스바)
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
             StartJump();
         }
 
-        // 3. 점프 상태 업데이트
+        // 2. 점프 상태 업데이트
         if (isJumping)
         {
             UpdateJump();
         }
-
-        // 이동 방향 값 초기화 (프레임 끝에서)
-        isMovingRight = false;
     }
 
     void StartJump()
@@ -96,7 +69,7 @@ public class PlayerController : MonoBehaviour
             transform.position = new Vector3(transform.position.x, startPosition.y, transform.position.z);
             isJumping = false;
 
-            // 다시 아이들(또는 런) 애니메이션으로 교체
+            // 다시 아이들 애니메이션으로 교체
             if (idleController != null)
             {
                 animator.runtimeAnimatorController = idleController;
